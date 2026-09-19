@@ -166,3 +166,97 @@ canvas#game {
   .dbtn, .kick-btn { width: 46px; height: 46px; font-size: 15px; }
   .kick-btn { width: 78px; height: 78px; }
 }
+
+/* ================= login / lobby ================= */
+.hidden { display: none !important; }
+
+.panel {
+  background: #0f1720;
+  border: 1px solid #24313d;
+  border-radius: 14px;
+  padding: 26px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand {
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: #ffd54f;
+  text-shadow: 0 0 12px rgba(255,213,79,0.4);
+}
+.brand.small { font-size: 16px; margin-top: 4px; }
+
+.subtitle { color: #9fb0bd; font-size: 14px; max-width: 320px; }
+
+.primary-btn, .secondary-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+}
+.primary-btn { background: #2e7d32; color: #fff; }
+.primary-btn:hover { background: #388e3c; }
+.secondary-btn { background: #22303c; color: #eef2f5; border: 1px solid #3a4d5c; }
+.secondary-btn:hover { background: #2b3c4a; }
+
+.link-btn {
+  background: none; border: none; color: #64b5f6;
+  font-size: 13px; text-decoration: underline; cursor: pointer;
+}
+
+.error-text { color: #ef5350; font-size: 13px; }
+
+.userbar {
+  display: flex; align-items: center; gap: 8px;
+  align-self: flex-start; font-size: 13px; color: #cfd8dc;
+}
+.avatar { width: 28px; height: 28px; border-radius: 50%; }
+
+.lobby-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; }
+.join-row { display: flex; gap: 8px; width: 100%; max-width: 280px; }
+.join-row input {
+  flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #3a4d5c;
+  background: #182028; color: #fff; text-transform: uppercase; letter-spacing: 2px;
+  min-width: 0;
+}
+.join-row button { width: auto; padding: 10px 16px; }
+
+.waiting-box { text-align: center; margin-top: 6px; }
+.room-code {
+  font-size: 34px; letter-spacing: 8px; font-weight: bold;
+  color: #ffd54f; background: #000; padding: 10px 18px; border-radius: 8px; margin: 8px 0;
+}
+
+.turn-banner {
+  text-align: center; font-weight: bold; font-size: 14px;
+  color: #ffd54f; padding: 8px; letter-spacing: 0.5px;
+}
+
+/* zone overlay sits directly on top of the canvas, same aspect box */
+.field-wrap { position: relative; }
+.zone-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  max-width: 480px; margin: 0 auto; pointer-events: none;
+}
+.zone-btn {
+  position: absolute;
+  background: rgba(255,255,255,0.06);
+  border: 2px dashed rgba(255,255,255,0.35);
+  border-radius: 6px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  pointer-events: all;
+}
+.zone-btn:hover { background: rgba(255,213,79,0.25); }
+.zone-disabled { pointer-events: none; opacity: 0.4; }
+.zone-picked { background: rgba(46,125,50,0.5) !important; border-color: #7fff7f !important; }

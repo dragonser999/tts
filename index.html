@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stadium Striker - Football Game</title>
 <link rel="stylesheet" href="style.css">
+<script src="/config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
 
@@ -16,23 +19,62 @@
   <div class="stadium">
     <div class="stand top"></div>
 
-    <div class="scoreboard">
-      <div class="sb-box">
-        <span class="sb-label">GOALS</span>
-        <span id="score">0</span>
+    <!-- ===== LOGIN SCREEN ===== -->
+    <section id="loginScreen" class="panel">
+      <h1 class="brand">STADIUM STRIKER</h1>
+      <p class="subtitle">Sign in with Google to play online, or jump straight into practice.</p>
+      <div id="googleBtnContainer"></div>
+      <button id="practiceBtn" class="secondary-btn">Play Practice Mode (no login)</button>
+      <p id="authError" class="error-text hidden"></p>
+    </section>
+
+    <!-- ===== LOBBY ===== -->
+    <section id="lobbyScreen" class="panel hidden">
+      <div class="userbar">
+        <img id="userPic" class="avatar" alt="">
+        <span id="userName"></span>
+        <button id="logoutBtn" class="link-btn">Sign out</button>
       </div>
-      <div class="sb-title">STADIUM STRIKER</div>
-      <div class="sb-box">
-        <span class="sb-label">TIME</span>
-        <span id="time">90</span>
+      <h2 class="brand small">ONLINE PENALTY SHOOTOUT</h2>
+      <div class="lobby-actions">
+        <button id="createRoomBtn" class="primary-btn">Create Room</button>
+        <div class="join-row">
+          <input id="joinCodeInput" maxlength="5" placeholder="ROOM CODE">
+          <button id="joinRoomBtn" class="primary-btn">Join</button>
+        </div>
+        <button id="practiceFromLobbyBtn" class="secondary-btn">Play Practice Mode</button>
       </div>
+      <div id="waitingBox" class="waiting-box hidden">
+        <p>Room code:</p>
+        <div id="roomCodeDisplay" class="room-code"></div>
+        <p>Share this code with a friend. Waiting for them to join…</p>
+        <button id="cancelWaitBtn" class="link-btn">Cancel</button>
+      </div>
+      <p id="lobbyError" class="error-text hidden"></p>
+    </section>
+
+    <!-- ===== SCOREBOARD (shared by both modes) ===== -->
+    <div id="scoreboardWrap" class="hidden">
+      <div class="scoreboard">
+        <div class="sb-box">
+          <span class="sb-label" id="sbLeftLabel">GOALS</span>
+          <span id="score">0</span>
+        </div>
+        <div class="sb-title" id="sbTitle">STADIUM STRIKER</div>
+        <div class="sb-box">
+          <span class="sb-label" id="sbRightLabel">TIME</span>
+          <span id="time">90</span>
+        </div>
+      </div>
+      <div id="turnBanner" class="turn-banner hidden"></div>
     </div>
 
     <div class="stands-side">
       <div class="stand left"></div>
 
       <div class="field-wrap">
-        <canvas id="game" width="480" height="760"></canvas>
+        <canvas id="game" width="480" height="760" class="hidden"></canvas>
+        <div id="zoneOverlay" class="zone-overlay hidden"></div>
         <div id="message" class="message hidden"></div>
       </div>
 
@@ -42,7 +84,7 @@
     <div class="stand bottom"></div>
   </div>
 
-  <div class="controls-panel">
+  <div id="controlsPanel" class="controls-panel hidden">
     <div class="dpad">
       <button class="dbtn up" data-dir="up">▲</button>
       <div class="dpad-row">
@@ -54,9 +96,14 @@
     <button id="kickBtn" class="kick-btn">KICK</button>
   </div>
 
-  <p class="hint">Desktop: Arrow keys / WASD to move, hold Space to charge shot &nbsp;|&nbsp; Mobile: use the pad and hold KICK</p>
+  <p id="hintText" class="hint hidden"></p>
   <button id="restartBtn" class="restart-btn hidden">Restart Match</button>
+  <button id="rematchBtn" class="restart-btn hidden">Rematch</button>
+  <button id="backToLobbyBtn" class="link-btn hidden">Back to Lobby</button>
 
+<script src="auth.js"></script>
+<script src="lobby.js"></script>
+<script src="multiplayer.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

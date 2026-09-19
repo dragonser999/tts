@@ -1,7 +1,7 @@
 {
   "name": "stadium-striker",
-  "version": "1.0.0",
-  "description": "Original HTML5 canvas football (soccer) game - no images, pure HTML/CSS/JS",
+  "version": "2.0.0",
+  "description": "Original HTML5 canvas football game with Google Sign-In and online 1v1 room play - no images, pure HTML/CSS/JS + Node backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -10,6 +10,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "google-auth-library": "^9.11.0",
+    "socket.io": "^4.7.5"
   }
 }

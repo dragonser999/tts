@@ -46,7 +46,12 @@ let charging = false;
 let chargeStart = 0;
 const MAX_CHARGE = 650; // ms
 
+function inputFocused() {
+  const t = document.activeElement && document.activeElement.tagName;
+  return t === 'INPUT' || t === 'TEXTAREA';
+}
 window.addEventListener('keydown', e => {
+  if (inputFocused() || !soloStarted || gameOver) return;
   keys[e.key.toLowerCase()] = true;
   if (e.code === 'Space') {
     e.preventDefault();
@@ -54,6 +59,7 @@ window.addEventListener('keydown', e => {
   }
 });
 window.addEventListener('keyup', e => {
+  if (inputFocused()) return;
   keys[e.key.toLowerCase()] = false;
   if (e.code === 'Space') {
     e.preventDefault();
@@ -313,8 +319,10 @@ function roundRect(x, y, w, h, r) {
 }
 
 function loop() {
-  update();
-  draw();
+  if (window.currentMode === 'solo') {
+    update();
+    draw();
+  }
   requestAnimationFrame(loop);
 }
 
@@ -346,6 +354,13 @@ function resetMatch() {
   startTimer();
 }
 
-resetPositions();
-startTimer();
-loop();
+let soloStarted = false;
+function startSoloGame() {
+  resetMatch();
+  if (!soloStarted) { soloStarted = true; loop(); }
+}
+function stopSoloGame() {
+  gameOver = true;
+  clearInterval(timerId);
+}
+window.StadiumSolo = { start: startSoloGame, stop: stopSoloGame };
