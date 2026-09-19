@@ -1,0 +1,15 @@
+{
+  "name": "stadium-striker",
+  "version": "1.0.0",
+  "description": "Original HTML5 canvas football (soccer) game - no images, pure HTML/CSS/JS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

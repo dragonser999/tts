@@ -1,0 +1,168 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #0a0f14;
+  color: #eef2f5;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 12px 8px 24px;
+  overflow-x: hidden;
+}
+
+/* ---------- floodlights ---------- */
+.floodlights { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.light {
+  position: absolute; top: -60px; width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,247,200,0.18), rgba(255,247,200,0) 70%);
+}
+.light.left { left: -60px; }
+.light.right { right: -60px; }
+
+/* ---------- stadium shell ---------- */
+.stadium {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  background: linear-gradient(180deg,#1b232c,#12181f);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 0 0 4px #05080b, 0 12px 40px rgba(0,0,0,0.6);
+}
+
+.stand {
+  height: 26px;
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(90deg,
+      #c62828 0px, #c62828 6px,
+      #283593 6px, #283593 12px,
+      #f9a825 12px, #f9a825 18px,
+      #2e7d32 18px, #2e7d32 24px);
+  opacity: 0.55;
+  margin: 4px 0;
+}
+
+.stands-side { display: flex; align-items: stretch; gap: 4px; }
+.stand.left, .stand.right { width: 18px; height: auto; }
+.stand.left {
+  background: repeating-linear-gradient(0deg,#c62828 0px,#c62828 6px,#283593 6px,#283593 12px,#f9a825 12px,#f9a825 18px,#2e7d32 18px,#2e7d32 24px);
+  border-radius: 6px; opacity: 0.55;
+}
+.stand.right { background: inherit; }
+.stand.right { background: repeating-linear-gradient(0deg,#c62828 0px,#c62828 6px,#283593 6px,#283593 12px,#f9a825 12px,#f9a825 18px,#2e7d32 18px,#2e7d32 24px); border-radius: 6px; opacity: 0.55; }
+
+/* ---------- scoreboard ---------- */
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #000;
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-bottom: 6px;
+  font-family: 'Courier New', monospace;
+}
+.sb-box { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+.sb-label { font-size: 10px; letter-spacing: 1px; color: #7fdb7f; }
+.sb-box span:last-child { font-size: 26px; color: #7fff7f; text-shadow: 0 0 6px #2f2; }
+.sb-title { font-size: 14px; font-weight: bold; letter-spacing: 2px; color: #ffd54f; text-align: center; }
+
+/* ---------- field ---------- */
+.field-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+canvas#game {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 3px #0d2e0d;
+  touch-action: none;
+}
+
+.message {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.75);
+  color: #ffd54f;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+  pointer-events: none;
+}
+.message.hidden { display: none; }
+
+/* ---------- controls ---------- */
+.controls-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 560px;
+}
+.dpad { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dpad-row { display: flex; gap: 4px; }
+.dbtn, .kick-btn {
+  background: #22303c;
+  color: #eef2f5;
+  border: 2px solid #3a4d5c;
+  border-radius: 10px;
+  font-size: 18px;
+  width: 52px;
+  height: 52px;
+  user-select: none;
+  touch-action: none;
+}
+.dbtn:active, .kick-btn:active { background: #3a4d5c; }
+.kick-btn {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff8a65, #d84315);
+  font-weight: bold;
+  font-size: 16px;
+  border: 3px solid #ffccbc;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #8a97a3;
+  text-align: center;
+  max-width: 500px;
+}
+
+.restart-btn {
+  margin-top: 14px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  background: #2e7d32;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.restart-btn.hidden { display: none; }
+.restart-btn:hover { background: #388e3c; }
+
+@media (max-width: 420px) {
+  .dbtn, .kick-btn { width: 46px; height: 46px; font-size: 15px; }
+  .kick-btn { width: 78px; height: 78px; }
+}
