@@ -1,5 +1,4 @@
-// ===== Lobby: screen switching + Socket.IO room create/join =====
-const loginScreen = document.getElementById('loginScreen');
+// ===== Lobby: screen switching + Socket.IO room create/join (name + password) =====
 const lobbyScreen = document.getElementById('lobbyScreen');
 const scoreboardWrap = document.getElementById('scoreboardWrap');
 const gameCanvas = document.getElementById('game');
@@ -9,27 +8,18 @@ const restartBtn = document.getElementById('restartBtn');
 const rematchBtn = document.getElementById('rematchBtn');
 const backToLobbyBtn = document.getElementById('backToLobbyBtn');
 const waitingBox = document.getElementById('waitingBox');
-const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+const waitingText = document.getElementById('waitingText');
 const lobbyError = document.getElementById('lobbyError');
 const zoneOverlay = document.getElementById('zoneOverlay');
 const turnBanner = document.getElementById('turnBanner');
 
-let currentMode = null; // 'solo' | 'online'
 window.socket = window.io ? io() : null;
 
 function hide(el) { el && el.classList.add('hidden'); }
 function show(el) { el && el.classList.remove('hidden'); }
 
-window.showLoginScreen = function () {
-  show(loginScreen); hide(lobbyScreen);
-  hideAllGameUI();
-};
-
-window.showLobbyScreen = function (user) {
-  hide(loginScreen); show(lobbyScreen);
-  document.getElementById('userName').textContent = user.name;
-  const pic = document.getElementById('userPic');
-  if (user.picture) { pic.src = user.picture; show(pic); } else { hide(pic); }
+window.showLobbyScreen = function () {
+  show(lobbyScreen);
   hide(waitingBox); hide(lobbyError);
   hideAllGameUI();
 };
@@ -41,14 +31,22 @@ function hideAllGameUI() {
 }
 
 function enterGameShell(mode) {
-  currentMode = mode;
   window.currentMode = mode;
-  hide(loginScreen); hide(lobbyScreen);
+  hide(lobbyScreen);
   show(scoreboardWrap); show(gameCanvas); show(backToLobbyBtn);
 }
 
+function currentPlayerName() {
+  const v = document.getElementById('playerNameInput').value.trim();
+  return v.slice(0, 20) || 'Player';
+}
+
+function showLobbyError(msg) {
+  lobbyError.textContent = msg;
+  show(lobbyError);
+}
+
 // ---- Practice mode (no login required) ----
-document.getElementById('practiceBtn').addEventListener('click', startPractice);
 document.getElementById('practiceFromLobbyBtn').addEventListener('click', startPractice);
 
 function startPractice() {
@@ -65,14 +63,21 @@ function startPractice() {
 
 // ---- Create / Join room ----
 document.getElementById('createRoomBtn').addEventListener('click', () => {
-  if (!window.socket) return;
-  window.socket.emit('create-room', { user: window.currentUser });
+  hide(lobbyError);
+  const roomName = document.getElementById('createRoomNameInput').value.trim();
+  const password = document.getElementById('createRoomPassInput').value.trim();
+  if (!roomName) return showLobbyError('Enter a room name.');
+  if (!password) return showLobbyError('Enter a room password.');
+  window.socket.emit('create-room', { roomName, password, playerName: currentPlayerName() });
 });
 
 document.getElementById('joinRoomBtn').addEventListener('click', () => {
-  const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-  if (!code) return;
-  window.socket.emit('join-room', { code, user: window.currentUser });
+  hide(lobbyError);
+  const roomName = document.getElementById('joinRoomNameInput').value.trim();
+  const password = document.getElementById('joinRoomPassInput').value.trim();
+  if (!roomName) return showLobbyError('Enter the room name.');
+  if (!password) return showLobbyError('Enter the room password.');
+  window.socket.emit('join-room', { roomName, password, playerName: currentPlayerName() });
 });
 
 document.getElementById('cancelWaitBtn').addEventListener('click', () => {
@@ -84,24 +89,20 @@ backToLobbyBtn.addEventListener('click', () => {
   window.StadiumSolo?.stop();
   window.StadiumMultiplayer?.leave();
   window.socket?.emit('leave-room');
-  if (window.currentUser) window.showLobbyScreen(window.currentUser);
-  else window.showLoginScreen();
+  window.showLobbyScreen();
 });
 
 if (window.socket) {
-  window.socket.on('room-created', ({ code }) => {
+  window.socket.on('room-created', ({ roomName }) => {
     show(waitingBox);
-    roomCodeDisplay.textContent = code;
-    window.currentRoomCode = code;
+    waitingText.textContent = `Room "${roomName}" created. Share the room name and password with a friend — waiting for them to join…`;
+    window.currentRoomName = roomName;
   });
 
-  window.socket.on('join-error', ({ message }) => {
-    lobbyError.textContent = message;
-    show(lobbyError);
-  });
+  window.socket.on('room-error', ({ message }) => showLobbyError(message));
 
-  window.socket.on('room-joined', ({ code }) => {
-    window.currentRoomCode = code;
+  window.socket.on('room-joined', ({ roomName }) => {
+    window.currentRoomName = roomName;
     hide(lobbyError);
   });
 
@@ -109,13 +110,12 @@ if (window.socket) {
     hide(waitingBox);
     enterGameShell('online');
     hide(controlsPanel); hide(hintText); hide(restartBtn); hide(rematchBtn);
-    window.StadiumMultiplayer.begin(data, window.currentRoomCode);
+    window.StadiumMultiplayer.begin(data);
   });
 
   window.socket.on('opponent-left', () => {
-    alert('Your opponent left the match.');
+    if (window.currentMode === 'online') alert('Your opponent left the match.');
     window.StadiumMultiplayer?.leave();
-    if (window.currentUser) window.showLobbyScreen(window.currentUser);
-    else window.showLoginScreen();
+    window.showLobbyScreen();
   });
 }

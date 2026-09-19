@@ -260,3 +260,30 @@ canvas#game {
 .zone-btn:hover { background: rgba(255,213,79,0.25); }
 .zone-disabled { pointer-events: none; opacity: 0.4; }
 .zone-picked { background: rgba(46,125,50,0.5) !important; border-color: #7fff7f !important; }
+
+/* ================= name/password room forms ================= */
+.stadium { max-width: 560px; }
+.panel { padding: 26px 20px 30px; }
+
+.text-input {
+  width: 100%; max-width: 280px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: 1px solid #3a4d5c;
+  background: #182028;
+  color: #fff;
+  font-size: 14px;
+}
+.text-input::placeholder { color: #6b7c8a; }
+
+.room-form {
+  width: 100%; max-width: 280px;
+  display: flex; flex-direction: column; gap: 8px;
+  background: #131c24;
+  border: 1px solid #223040;
+  border-radius: 10px;
+  padding: 14px;
+}
+.form-label { font-size: 12px; letter-spacing: 1px; color: #8a97a3; text-transform: uppercase; }
+
+.lobby-actions { display: flex; flex-direction: column; gap: 16px; width: 100%; align-items: center; margin-top: 4px; }

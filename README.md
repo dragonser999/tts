@@ -6,68 +6,59 @@ player, ball and goalkeeper are all drawn with CSS gradients and HTML5 Canvas
 shapes.
 
 Two ways to play:
-- **Practice Mode** — no login needed. Dribble and shoot past an AI keeper
-  before the 90-second clock runs out.
-- **Online Mode** — sign in with Google, then **Create Room** (get a 5-letter
-  code) or **Join Room** with a friend's code, and play a live 1v1 penalty
-  shootout (5 kicks each, sudden death if tied) synced in real time.
+- **Practice Mode** — jump straight in, no account needed. Dribble and shoot
+  past an AI keeper before the 90-second clock runs out.
+- **Online Mode** — enter your name, then either **Create Room** (pick a room
+  name + password) or **Join Room** with a friend's room name + password, and
+  play a live 1v1 penalty shootout (5 kicks each, sudden death if tied)
+  synced in real time over Socket.IO.
+
+No login provider, no accounts, no database — rooms are just a name +
+password pair that live in server memory while both players are in them.
 
 ## Files
 - `index.html`, `style.css` — page structure and stadium/UI styling
 - `script.js` — solo practice game engine (movement, physics, AI keeper)
-- `auth.js` — Google Sign-In handling on the client
 - `lobby.js` — screen switching + create/join room via Socket.IO
 - `multiplayer.js` — the online penalty-shootout game client
-- `server.js` — Express server: static hosting, Google ID token verification,
-  session, and the Socket.IO room/match logic (authoritative on the server)
+- `server.js` — Express server: static hosting + Socket.IO room/match logic
+  (server is authoritative for scoring, so it can't be cheated from the client)
 - `package.json` — dependencies + start script
-- `.env.example` — environment variables you need to set
 
-## 1. Get a Google OAuth Client ID
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
-2. Create (or select) a project → **Create Credentials → OAuth client ID**.
-3. Application type: **Web application**.
-4. Under **Authorized JavaScript origins**, add the exact URL you'll deploy to,
-   e.g. `https://your-app.onrender.com` or `https://your-app.up.railway.app`
-   (and `http://localhost:3000` for local testing).
-5. Copy the generated **Client ID** (looks like `xxxx.apps.googleusercontent.com`).
-   You do **not** need the client secret — this app uses Google Identity
-   Services' token-verification flow, not a redirect OAuth flow.
-
-## 2. Set environment variables
-Copy `.env.example` to `.env` for local testing, or add these in your
-Render / Railway dashboard's **Environment** tab:
-
-```
-GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-SESSION_SECRET=any-random-long-string
-```
-
-## 3. Run locally
+## Run locally
 ```
 npm install
 npm start
 ```
 Visit `http://localhost:3000`.
 
-## 4. Deploy on Render
+## Deploy on Render
 1. Push these files to a GitHub repo.
 2. Render → **New → Web Service** → connect the repo.
 3. Build command: `npm install`  |  Start command: `npm start`
-4. Add the environment variables from step 2.
-5. Deploy, then add the resulting `https://...onrender.com` URL to your
-   Google OAuth client's Authorized JavaScript origins.
+4. Deploy — Render gives you a public URL.
 
-## 5. Deploy on Railway
+## Deploy on Railway
 1. Push these files to a GitHub repo.
 2. Railway → **New Project → Deploy from GitHub repo**.
 3. Railway auto-detects Node.js (`npm install` + `npm start`).
-4. Add the environment variables from step 2 in the **Variables** tab.
-5. Click **Generate Domain**, then add that URL to your Google OAuth client's
-   Authorized JavaScript origins.
+4. Click **Generate Domain** to get a public URL.
+
+## How online rooms work
+- **Create Room**: pick any room name (must not already be in use) and a
+  password. You'll see a waiting screen with the room name to share.
+- **Join Room**: your friend enters that same room name + password from their
+  own device/browser. As soon as they join, the match starts automatically
+  for both players.
+- Each round, the shooter picks one of 5 target zones in the goal and the
+  keeper (the other player) picks one of 5 zones to dive to, at the same
+  time. Match is best-of-5 kicks each, alternating who shoots; sudden death
+  if it's tied after that.
+- Room names are case-insensitive and freed up as soon as a player leaves or
+  disconnects, so the same name can be reused.
 
 ## Notes
-- Rooms and match state live in server memory — fine for casual play; restart
-  the service and open rooms are cleared.
-- The game needs a persistent Node process (for Socket.IO), so use a **Web
-  Service** on Render (not a Static Site) or Railway, both included above.
+- Rooms/match state live in server memory only — restarting the service
+  clears any open rooms. Fine for casual play.
+- Needs a persistent Node process (for Socket.IO), so use a **Web Service**
+  on Render (not a Static Site) or Railway, both covered above.

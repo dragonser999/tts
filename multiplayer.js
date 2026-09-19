@@ -25,7 +25,6 @@
 
   let myIndex = 0;
   let players = [];
-  let roomCode = null;
   let shooterIdx = 0;
   let scores = [0, 0];
   let selectedZone = null;
@@ -34,9 +33,8 @@
 
   window.socket?.on('your-index', ({ index }) => { myIndex = index; });
 
-  function begin(data, code) {
+  function begin(data) {
     players = data.players;
-    roomCode = code;
     shooterIdx = data.shooterIndex;
     scores = [0, 0];
     lastResult = null;
@@ -83,7 +81,7 @@
     selectedZone = i;
     [...zoneOverlay.children].forEach(b => b.classList.add('zone-disabled'));
     btn.classList.add('zone-picked');
-    window.socket.emit('submit-choice', { code: roomCode, zone: i });
+    window.socket.emit('submit-choice', { zone: i });
     turnBanner.textContent = 'Choice locked in — waiting for opponent…';
   }
 
@@ -115,7 +113,7 @@
   });
 
   rematchBtn.addEventListener('click', () => {
-    window.socket.emit('rematch', { code: roomCode });
+    window.socket.emit('rematch');
   });
 
   function updateScoreboard() {
